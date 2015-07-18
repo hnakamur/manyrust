@@ -10,7 +10,7 @@ Download the `manyrust`
 
 ```
 mkdir ~/bin
-curl -s -o ~/bin/manyrust https://raw.githubusercontent.com/hnakamur/manyrust/manyrust
+curl -s -o ~/bin/manyrust https://raw.githubusercontent.com/hnakamur/manyrust/master/manyrust
 chmod +x ~/bin/manyrust
 ```
 
