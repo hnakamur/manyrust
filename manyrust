@@ -24,8 +24,8 @@
 # - channel: must be one of stable, beta, nightly. default: stable
 
 # The root directory of multiple rust installations.
-# You can change this by setting the RUSTS_ROOT environment variable.
-RUSTS_ROOT=${RUSTS_ROOT:-$HOME/rust}
+# You can change this by setting the MANYRUST_ROOT environment variable.
+MANYRUST_ROOT=${MANYRUST_ROOT:-$HOME/rust}
 
 tarball_sha256_url() {
 	channel_or_version="$1"
@@ -36,22 +36,22 @@ save_tarball_sha256() {
 	channel="$1"
 	channel_or_version="$2"
 	version_id="$3"
-	mkdir -p "${RUSTS_ROOT:-$HOME/rust}/$channel/$version_id/etc"
-	curl -s -o "${RUSTS_ROOT:-$HOME/rust}/$channel/$version_id/etc/tarball.sha256" `tarball_sha256_url "$channel_or_version"`
+	mkdir -p "${MANYRUST_ROOT:-$HOME/rust}/$channel/$version_id/etc"
+	curl -s -o "${MANYRUST_ROOT:-$HOME/rust}/$channel/$version_id/etc/tarball.sha256" `tarball_sha256_url "$channel_or_version"`
 }
 
 is_current_up_to_date() {
 	channel="$1"
 	channel_or_version="$2"
-	local_file="${RUSTS_ROOT:-$HOME/rust}/$channel/current/etc/tarball.sha256" 
+	local_file="${MANYRUST_ROOT:-$HOME/rust}/$channel/current/etc/tarball.sha256" 
 	[ -f "$local_file" ] && curl -s `tarball_sha256_url "$channel_or_version"` | cmp -s - "$local_file"
 }
 
 download_rustup_sh() {
-	if [ ! -x "$RUSTS_ROOT/bin/rustup.sh" ]; then
-		mkdir -p "$RUSTS_ROOT/bin"
-		curl -sSf -o "$RUSTS_ROOT/bin/rustup.sh" https://static.rust-lang.org/rustup.sh
-		chmod +x "$RUSTS_ROOT/bin/rustup.sh"
+	if [ ! -x "$MANYRUST_ROOT/bin/rustup.sh" ]; then
+		mkdir -p "$MANYRUST_ROOT/bin"
+		curl -sSf -o "$MANYRUST_ROOT/bin/rustup.sh" https://static.rust-lang.org/rustup.sh
+		chmod +x "$MANYRUST_ROOT/bin/rustup.sh"
 	fi
 }
 
@@ -79,9 +79,9 @@ rustc_version_id() {
 create_bashrc() {
 	channel="$1"
 	version_id="$2"
-	mkdir -p "${RUSTS_ROOT:-$HOME/rust}/$channel/$version_id/etc"
-	cat <<EOF > "${RUSTS_ROOT:-$HOME/rust}/$channel/$version_id/etc/bashrc"
-rust_root="\${RUSTS_ROOT:-\$HOME/rust}/$channel/$version_id/rust"
+	mkdir -p "${MANYRUST_ROOT:-$HOME/rust}/$channel/$version_id/etc"
+	cat <<EOF > "${MANYRUST_ROOT:-$HOME/rust}/$channel/$version_id/etc/bashrc"
+rust_root="\${MANYRUST_ROOT:-\$HOME/rust}/$channel/$version_id/rust"
 export PATH="\$rust_root/bin:\$PATH"
 export DYLD_LIBRARY_PATH="\$rust_root/lib:\$DYLD_LIBARARY_PATH"
 EOF
@@ -90,7 +90,7 @@ EOF
 create_current_link() {
 	channel="$1"
 	version_id="$2"
-	ln -sf "$version_id" "$RUSTS_ROOT/$channel/current"
+	ln -sf "$version_id" "$MANYRUST_ROOT/$channel/current"
 }
 
 get_current_stable_version() {
@@ -129,12 +129,12 @@ install() {
 	fi
 
 	download_rustup_sh
-	mkdir -p "$RUSTS_ROOT/tmp/rust"
-	"$RUSTS_ROOT/bin/rustup.sh" --channel="$channel" --prefix="$RUSTS_ROOT/tmp/rust" --disable-sudo --yes
-	version_id=`rustc_version_id "$RUSTS_ROOT/tmp/rust"`
-	mkdir -p "$RUSTS_ROOT/$channel/$version_id"
+	mkdir -p "$MANYRUST_ROOT/tmp/rust"
+	"$MANYRUST_ROOT/bin/rustup.sh" --channel="$channel" --prefix="$MANYRUST_ROOT/tmp/rust" --disable-sudo --yes
+	version_id=`rustc_version_id "$MANYRUST_ROOT/tmp/rust"`
+	mkdir -p "$MANYRUST_ROOT/$channel/$version_id"
 	save_tarball_sha256 "$channel" "$channel_or_version" "$version_id"
-	mv "$RUSTS_ROOT/tmp/rust" "$RUSTS_ROOT/$channel/$version_id/rust"
+	mv "$MANYRUST_ROOT/tmp/rust" "$MANYRUST_ROOT/$channel/$version_id/rust"
 	create_bashrc "$channel" "$version_id"
 	create_current_link "$channel" "$version_id"
 }
@@ -144,11 +144,11 @@ showcfg() {
 	version="$2"
 	case "$channel" in
 	stable|beta|nightly)
-		if [ ! -d "${RUSTS_ROOT:-\$HOME/rust}/$channel/$version" ]; then
+		if [ ! -d "${MANYRUST_ROOT:-\$HOME/rust}/$channel/$version" ]; then
 			echo "Specified version of rust is not installed. exiting" 1>&2
 			exit 2
 		fi
-		echo "source \"\${RUSTS_ROOT:-\$HOME/rust}/$channel/current/etc/bashrc\""
+		echo "source \"\${MANYRUST_ROOT:-\$HOME/rust}/$channel/current/etc/bashrc\""
 		;;
 	*)
 		usage
