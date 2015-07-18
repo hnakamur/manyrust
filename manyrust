@@ -83,7 +83,7 @@ create_bashrc() {
 	cat <<EOF > "${MANYRUST_ROOT:-$HOME/rust}/$channel/$version_id/etc/bashrc"
 rust_root="\${MANYRUST_ROOT:-\$HOME/rust}/$channel/$version_id/rust"
 export PATH="\$rust_root/bin:\$PATH"
-export DYLD_LIBRARY_PATH="\$rust_root/lib:\$DYLD_LIBARARY_PATH"
+export DYLD_LIBRARY_PATH="\$rust_root/lib:\$DYLD_LIBRARY_PATH"
 EOF
 }
 
