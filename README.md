@@ -44,6 +44,33 @@ Install the rust from the nightly channel.
 manyrust install nightly
 ```
 
+### The installed directory structure
+
+You can change the root directory by setting the `MANY_ROOT` environment variable.
+
+```
+$MANYRUST_ROOT (default: $HOME/rust)
+├── beta
+│   ├── 1.2.0-beta.2
+│   │   ├── etc
+│   │   └── rust
+│   └── current -> 1.2.0-beta.2
+├── bin
+│   └── rustup.sh
+├── nightly
+│   ├── 2015-07-14
+│   │   ├── etc
+│   │   └── rust
+│   └── current -> 2015-07-14
+├── stable
+│   ├── 1.1.0
+│   │   ├── etc
+│   │   └── rust
+│   └── current -> 1.1.0
+└── tmp
+```
+
+
 ### Set up for using rust
 
 I recommend you to use [direnv]( https://github.com/direnv/direnv ).
